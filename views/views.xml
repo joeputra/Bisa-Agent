@@ -1,0 +1,69 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+
+  <!--Phonecalls Tree View -->
+  <record id="voip_phonecall_tree_view" model="ir.ui.view">
+    <field name="name">Phonecalls Tree</field>
+    <field name="model">bisa_agent.phonecall</field>
+    <field name="arch" type="xml">
+      <tree string="Phone calls" edit="0" create="0">
+        <field name="phonecall_type"/>
+        <field name="name"/>
+        <field name="call_date"/>
+        <field name="phone"/>
+        <field name="user_id"/>
+        <field name="state"/>
+        <field name="duration" widget="float_time"/>
+        <field name="waiting_time" widget="float_time"/>
+        <field name="partner_id"/>
+      </tree>
+    </field>
+  </record>
+
+  <!-- Phonecalls Search View  -->
+  <record id="view_voip_case_phonecalls_filter" model="ir.ui.view">
+    <field name="name">Phonecalls Search</field>
+    <field name="model">bisa_agent.phonecall</field>
+    <field name="arch" type="xml">
+      <search string="Search Phone calls">
+        <field name="name" string="Phone calls"/>
+        <field name="call_date"/>
+        <field name="state"/>
+        <filter string="My Phonecalls" name="my_phonecalls" domain="[('user_id', '=', uid)]"/>
+        <filter string="Unassigned" name="unassigned" domain="[('user_id','=',False)]"/>
+        <separator/>
+        <field name="user_id"/>
+        <group expand="0" string="Group By">
+          <filter string="Responsible" name="responsible" domain="[]" context="{'group_by':'user_id'}"/>
+          <filter string="Creation Date" name="creation" help="Creation Date" domain="[]" context="{'group_by':'create_date'}"/>
+          <filter string="Date" name="month" domain="[]" context="{'group_by':'call_date'}" help="Calls Date"/>
+        </group>
+      </search>
+    </field>
+  </record>
+
+  <!-- Add the menu to reach the phonecall's view-->
+  <record id="voip_phonecall_view" model="ir.actions.act_window">
+    <field name="name">Phonecalls</field>
+    <field name="res_model">bisa_agent.phonecall</field>
+    <field name="view_mode">tree</field>
+    <field name="view_id" ref="voip_phonecall_tree_view"/>
+    <field name="context" eval="{'search_default_phonecalls_to_do':1}"/>
+    <field name="search_view_id" ref="view_voip_case_phonecalls_filter"/>
+    <field name="help" type="html">
+      <p class="o_view_nocontent_smiling_face">
+        Log the summary of a phonecall
+      </p><p>
+        Odoo allows you to log inbound calls on the fly to track the
+        history of the communication with a customer or to inform another
+        team member.
+      </p><p>
+        In order to follow up on the call, you can trigger a request for
+        another call, a meeting.
+      </p>
+    </field>
+  </record>
+
+  <menuitem id="menu_voip_phonecall_view" name="Phone calls"  action="voip_phonecall_view" web_icon="bisa_agent,static/description/icon.png"/>
+
+</odoo>
